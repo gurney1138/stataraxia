@@ -1,0 +1,34 @@
+My version of the Monthy Hall problem (R code) :
+
+# Nettoyage de la mémoire
+rm(list=ls())
+
+nreps=10000  # Nombre de répétitions
+resultat <- as.data.frame(matrix(NA, ncol=6, nrow=nreps))  # Pour stocker les résultats à venir
+colnames(resultat) <- c('cadeau', 'choix_candidat_1', 'choix_animateur',
+                        'choix_candidat_2', 'choix_maintenu', 'gain')
+
+# On va simuler le processus nreps fois et stocker le résultat à chaque fois
+for (i in (1:nreps)) {
+  cadeau <- sample(1:3)[1]  # Porte où se trouve le cadeau
+  choix_candidat_1 <- sample(1:3)[1]  # Choix du candidat
+  choix_animateur <- ifelse(cadeau == choix_candidat_1, 
+                              sample((1:3)[-c(cadeau)]),
+                            (1:3)[-c(cadeau, choix_candidat_1)])[1]  # Choix de l'animateur
+  choix_candidat_2 <- sample((1:3)[-c(choix_animateur)])[1] # Choix 2 du candidat
+  choix_maintenu <- ifelse(choix_candidat_1 == choix_candidat_2, 1, 0)
+  gain  <- ifelse(cadeau == choix_candidat_2, 1, 0)
+  resultat[i,1] <- cadeau
+  resultat[i,2] <- choix_candidat_1
+  resultat[i,3] <- choix_animateur
+  resultat[i,4] <- choix_candidat_2
+  resultat[i,5] <- choix_maintenu
+  resultat[i,6] <- gain
+}
+
+# Les résultats
+prop.table(table(resultat$gain, resultat$choix_maintenu), 2)
+
+            0         1
+  0 0.3315529 0.6679474
+  1 0.6684471 0.3320526
