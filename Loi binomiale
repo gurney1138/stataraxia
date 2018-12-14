@@ -2,8 +2,10 @@ Histoire de faire un peu d'algorithmique et de Python, je me suis amusé à prog
 Rappelons que si X est une variable aléatoire comptant le nombre de succès au cours de n répétitions avec une probabilité de succès égale à p, alors X suit une loi binomiale B(n,p).
 La probabilité que X soit égale à k (k compris entre 0 et n) se calcule tel que : P(X=k) = (nk) pk (1-p)n-k avec (nk) pour le nombre de combinaisons de k dans n.
 Je commence par importer les modules dont j'ai besoin sous Python.
+
 import numpy as np
 import pandas as pd
+
 Je définis une première fonction qui renvoie le nombre de succès :
 def simu_bino(n, p): # n = nombre d'expériences, p = probabilité de succès
     S = 0 # Succès
@@ -14,6 +16,7 @@ def simu_bino(n, p): # n = nombre d'expériences, p = probabilité de succès
             S = S + 1
         i = i + 1
     return S
+    
 J'en définis une deuxième pour "jouer" la première autant de fois qu'on le souhaiterait et stocker le résultat à chaque fois :
 def aggr_bino(n, p, nreps): # Fonction d'aggrégation des résultats précédents
     j = 1 # Compteur
@@ -24,14 +27,18 @@ def aggr_bino(n, p, nreps): # Fonction d'aggrégation des résultats précédent
             R = np.append(R, simu_bino(n, p)) # On alimente la liste avec les résultats suivants
         j = j+1
     return R
+    
 Je vais exécuter ces fonctions avec les valeurs suivantes : B(9, 2/7)
 res1 = pd.Series(aggr_bino(n=9, p=2/7, nreps=100000)).value_counts().sort_index()
+
 Afin de vérifier que je n'ai pas commis d'erreur, je vais comparer les résultats avec la loi binomiale programmée dans le module pandas (tellement utilisé sur la planète que je le vois mal encore entaché d'erreur !):
 res2 = pd.Series(np.random.binomial(9, 2/7, 100000)).value_counts().sort_index()
+
 Je constitue un fichier unique et je calcule les proportions :
 m = np.array([res1, res2])
 df = pd.DataFrame(m.transpose(), columns=['Ma_simu','Loi_bino'])
 df = df / 100000
+
 Pour la comparaison, je privilégie le graphique :
 import matplotlib.pyplot as plt
 width = 0.5 # the width of the bars
@@ -43,6 +50,7 @@ ax.legend((g1[0], g2[0]), ('Ma_simu', 'Loi_bino'))
 ax.set_ylabel('%')
 ax.set_xticks(np.arange(10))
 plt.show()
-Et voilà le résultat :
 
-J'ai l'impression que cela tient la route, non ?
+Et voilà le résultat (quand j'aurai compris comment l'afficher dans github :-)
+
+
